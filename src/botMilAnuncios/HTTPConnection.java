@@ -99,21 +99,15 @@ public class HTTPConnection {
 		return wb;
 	}
 	
-	/**
-	public String getArticuloId(HtmlPage page, Articulo a) {
-		HtmlAnchor anchor = getArticulo(page, a.getDireccionIP());		
-		if(anchor == null)
-			return null;
-		HtmlElement ele= (HtmlElement) anchor.getParentNode().getNextSibling().getNextSibling();
-		return ele.getAttribute("id").substring(2);
-	}
-	**/
+
 	public boolean autoRenovar(HtmlPage page, Articulo a){
+		
 		ScriptResult result = page.executeJavaScript("javascript:ventana('renovar/?id=','"+a.getID()+"')");		
 		HtmlPage pageRenove = (HtmlPage) result.getNewPage();			
 		HtmlSelect userInput = (HtmlSelect) pageRenove.getElementById("cada");
+		//System.out.println(page.asText());
 		try{	
-			userInput.setSelectedAttribute(a.getAutoRenoveHours(), true);
+			userInput.setSelectedAttribute(a.getAutoRenoveSegs(), true);
 			return true;
 			//System.out.println(userInput.asText());
 		}catch(NullPointerException e){

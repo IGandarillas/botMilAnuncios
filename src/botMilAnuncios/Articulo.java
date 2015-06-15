@@ -4,16 +4,18 @@ import java.util.ArrayList;
 
 public class Articulo {
 	private boolean borrar;
-	private String autoRenoveHours;//Numero de horas para autorrenovar
+	private String autoRenoveSegs;//Numero de horas para autorrenovar
+	private String autoRHour;
 	private String direccionIP;
 	private String ID;
+	private String titulo;
 	private int fila;
 	public Articulo(){
 		
 	}
-	public Articulo(boolean borrar, String autoRenoveHours, String direccionIP){
+	public Articulo(boolean borrar, String autoRenoveSegs, String direccionIP){
 		this.borrar=borrar;
-		this.autoRenoveHours=autoRenoveHours;
+		this.autoRenoveSegs=autoRenoveSegs;
 		this.direccionIP=direccionIP;
 	}
 	
@@ -30,11 +32,9 @@ public class Articulo {
 			borrar=true;
 		}else{
 			borrar=false;
-		}
-			
-					
+		}					
 		
-		autoRenoveHours=rowElements.get(2);
+		autoRenoveSegs=rowElements.get(2);
 	}
 	
 	public boolean isBorrar() {
@@ -43,11 +43,11 @@ public class Articulo {
 	public void setBorrar(boolean borrar) {
 		this.borrar = borrar;
 	}
-	public String getAutoRenoveHours() {
-		return autoRenoveHours;
+	public String getAutoRenoveSegs() {
+		return autoRenoveSegs;
 	}
-	public void setAutoRenoveHours(String autoRenoveHours) {
-		this.autoRenoveHours = autoRenoveHours;
+	public void setAutoRenoveSegs(String autoRenoveHours) {
+		this.autoRenoveSegs = autoRenoveHours;
 	}
 	public String getDireccionIP() {
 		return direccionIP;
@@ -66,5 +66,17 @@ public class Articulo {
 	}
 	public void setFila(int fila) {
 		this.fila = fila;
+	}
+	public String getAutoRHour() {
+		return autoRHour;
+	}
+	public void setAutoRHour(String autoRHour) {
+		this.autoRHour = autoRHour;
+	}
+	public String getTitulo() {
+		return titulo;
+	}
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 }

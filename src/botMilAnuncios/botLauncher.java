@@ -2,6 +2,7 @@ package botMilAnuncios;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class botLauncher {
@@ -16,38 +17,56 @@ public class botLauncher {
 		
 		XMLReader read=new XMLReader(path);
 		System.out.println("Excel leido");
-		
+		System.out.println("Peticion HTTP al servidor");
 					
 		HTTPConnection connect= new HTTPConnection();	
 		HtmlPage page = connect.loadURL(url);//Load URL
-		
 
-		Credenciales cred= new Credenciales(path);//Read credenciales
+		GlobalVariables cred= new GlobalVariables(path);//Read credenciales
 		HtmlPage page2 = connect.login(page,cred.getEmail(),cred.getPasswd());//Login Milanuncios	
 		
 		if(connect.isLogin()){
-			System.out.println("Login exitoso");
-			System.out.println(("De un total de "+read.getModCount()[0]+" filas, se van a modificar "+read.getModCount()[1]));
+			System.out.println("Login exitoso. Email: "+cred.getEmail());
+			System.out.println(("Articulos a modificar: "+read.getModCount()[1]));
 			
 			ArrayList<Articulo> modArticulos = read.getArticulos();//Excel articles must be modified	
 			
 			int contDeleted=0;//Deleted items count
-			int contAutoR=0;
-			for(Articulo a: modArticulos){			
+			int contAutoR=0; //Items autorrenovados
+			int min= cred.getMin();
+			int max=cred.getMax();
+			
+			for(Articulo a: modArticulos){					
+				int delay = (int) Math.floor(Math.random()*(max-min)+min);
 				String itemId = a.getID();
-
+				String itemName=a.getTitulo();
+				try {
+					System.out.println("Espera aleatoria de "+delay+" segundos.");
+					Thread.sleep(delay*1000);					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Catch thread sleep");
+					e.printStackTrace();
+				}
+				
 				if(itemId != null){		
 					if(a.isBorrar()){
 						contDeleted++;
-						page = connect.loadURL(
-							"http://www.milanuncios.com/cmd/?comando="+"borrar"+"&id="+itemId);
-						System.out.println("Fila: "+a.getFila()+" BORRADO: "+itemId+" ha sido borrado"); 
+						connect.loadURL("http://www.milanuncios.com/cmd/?comando="+"borrar"+"&id="+itemId);
+						page2=connect.loadURL(url);
+						System.out.println("Fila: "+a.getFila()+" BORRADO: "+itemName+" ha sido borrado"); 
 						
 					}else{
-						contAutoR++;
-						a.setID(itemId);
-						if(connect.autoRenovar(page2, a))
-							System.out.println("Fila "+a.getFila()+": AUTORRENOVADO: "+itemId+" cada "+a.getAutoRenoveHours());
+						contAutoR++;						
+						if(connect.autoRenovar(page2, a)){
+							switch(a.getAutoRHour()){
+								case "0": System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO desactivado: "+itemName);
+									break;
+								case "1": System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO cada hora.: "+itemName);
+									break;
+								default: System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO cada "+a.getAutoRHour()+" horas: "+itemName);
+							}
+						}
 					}
 				}else{
 					//Si el artículo no se ha podido encontrar
