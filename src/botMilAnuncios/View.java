@@ -13,6 +13,7 @@ public class View extends JPanel{
 	private JTextArea textArea = new JTextArea(30, 60);
 	private TextOutputStream outputStream = new TextOutputStream(textArea, "Log");
 	public View(){
+		
 		setLayout(new BorderLayout());
 		add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));

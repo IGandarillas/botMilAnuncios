@@ -36,27 +36,32 @@ public class botLauncher {
 			int min= cred.getMin();
 			int max=cred.getMax();
 			
-			for(Articulo a: modArticulos){					
-				int delay = (int) Math.floor(Math.random()*(max-min)+min);
+			for(Articulo a: modArticulos){		
+				
+				int delay = (int) Math.floor(Math.random()*(max-min)+min); //Random time between min max.
 				String itemId = a.getID();
 				String itemName=a.getTitulo();
+				
 				try {
 					System.out.println("Espera aleatoria de "+delay+" segundos.");
 					Thread.sleep(delay*1000);					
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					System.out.println("Catch thread sleep");
 					e.printStackTrace();
 				}
-				
-				if(itemId != null){		
-					if(a.isBorrar()){
+				/**
+				 * Funcionality, http://www.milanuncios.com/mis-anuncios/+ID+.htm
+				 * know if an item is in mis-anuncios list
+				 */
+				if(itemId != null){
+					//Delete and Autorrenove have mutual exclusion, Delete has more weight.
+					if(a.isBorrar()){//Delete
 						contDeleted++;
 						connect.loadURL("http://www.milanuncios.com/cmd/?comando="+"borrar"+"&id="+itemId);
 						page2=connect.loadURL(url);
 						System.out.println("Fila: "+a.getFila()+" BORRADO: "+itemName+" ha sido borrado"); 
 						
-					}else{
+					}else{//Autorrenove
 						contAutoR++;						
 						if(connect.autoRenovar(page2, a)){
 							switch(a.getAutoRHour()){
@@ -69,7 +74,7 @@ public class botLauncher {
 						}
 					}
 				}else{
-					//Si el artículo no se ha podido encontrar
+					//Item is not in mis-articulos.html
 					System.out.println("Fila "+a.getFila()+": este item no esta entre sus anuncios");
 				}
 

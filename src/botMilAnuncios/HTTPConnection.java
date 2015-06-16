@@ -20,26 +20,30 @@ public class HTTPConnection {
 	private WebClient wb;
 	private boolean login;//True si hace login
 	public HTTPConnection(){
+		//Config webClient
 		wb = new WebClient();
 		wb.waitForBackgroundJavaScript(1000);
-		wb.getCookieManager().setCookiesEnabled(true);
-		wb.getOptions().setJavaScriptEnabled(true);
+		wb.getCookieManager().setCookiesEnabled(true);//!important
+		wb.getOptions().setJavaScriptEnabled(true);//!Important
 		wb.getOptions().setCssEnabled(false);
 	    wb.getOptions().setUseInsecureSSL(true);
-	    wb.getCookieManager().setCookiesEnabled(true);
 	    wb.getOptions().setThrowExceptionOnScriptError(false);
 		wb.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		wb.setAjaxController(new NicelyResynchronizingAjaxController());
+		wb.setAjaxController(new NicelyResynchronizingAjaxController()); //!Imporant
+		//Avoid warning log
 	    java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+		
 		@SuppressWarnings("unused")
-		ConfirmHandler okHandler = new ConfirmHandler(){
+		//Event, when posible modal alert do...
+		ConfirmHandler acceptHandler = new ConfirmHandler(){
 			@Override
             public boolean handleConfirm(Page page, String message) {
 					System.out.println("Se ha confirmado");
                    return false;
             }
 		};
+		//Event, when alert show alert.
 		wb.setAlertHandler(new AlertHandler() {            
             @Override
             public void handleAlert(Page page, String message) {
@@ -48,12 +52,14 @@ public class HTTPConnection {
                 	
                  
             }
+            //Alerta Login incorrecto.
             public boolean login(String message){
             	login = !message.startsWith("El email o la ", 0);
             	return login;
             }
         });
 	}
+	//Load an url
 	public HtmlPage loadURL(String url){
 		try {
 			return wb.getPage(url);
@@ -89,7 +95,7 @@ public class HTTPConnection {
 		try{
 			return page.getAnchorByHref(href);
 		}catch(com.gargoylesoftware.htmlunit.ElementNotFoundException e){
-			//System.out.println("No se ha encontrado "+href+" en Page");
+			System.out.println("No se ha encontrado "+href+" en Page");
 		}
 		return null;
 		
@@ -105,11 +111,9 @@ public class HTTPConnection {
 		ScriptResult result = page.executeJavaScript("javascript:ventana('renovar/?id=','"+a.getID()+"')");		
 		HtmlPage pageRenove = (HtmlPage) result.getNewPage();			
 		HtmlSelect userInput = (HtmlSelect) pageRenove.getElementById("cada");
-		//System.out.println(page.asText());
 		try{	
 			userInput.setSelectedAttribute(a.getAutoRenoveSegs(), true);
 			return true;
-			//System.out.println(userInput.asText());
 		}catch(NullPointerException e){
 			System.out.println("No se pudo elegir opción");
 		}

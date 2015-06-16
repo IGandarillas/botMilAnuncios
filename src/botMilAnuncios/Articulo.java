@@ -1,42 +1,26 @@
 package botMilAnuncios;
-import java.util.ArrayList;
 
-
+/**
+ * This class define an Item 
+ * @author IGandarillas
+ *
+ */
 public class Articulo {
-	private boolean borrar;
-	private String autoRenoveSegs;//Numero de horas para autorrenovar
-	private String autoRHour;
-	private String direccionIP;
-	private String ID;
-	private String titulo;
-	private int fila;
+	private boolean borrar; //delete or not delete
+	private String autoRenoveSegs;//secs to autorrenovar
+	private String autoRHour; //Hours to autorrenovar
+	private String direccionIP; //Unused
+	private String ID; //id reference
+	private String titulo; // Name
+	private int fila; //Position in excel
+	
+	/**
+	 * Constructur and observers
+	 */
 	public Articulo(){
 		
 	}
-	public Articulo(boolean borrar, String autoRenoveSegs, String direccionIP){
-		this.borrar=borrar;
-		this.autoRenoveSegs=autoRenoveSegs;
-		this.direccionIP=direccionIP;
-	}
-	
-	public Articulo(ArrayList<String> rowElements) {
-		parseList(rowElements);
-	}
-	/**
-	 * Configurar atributos del artículo.
-	 * @param rowElements
-	 */
-	public void parseList(ArrayList<String> rowElements){
-		direccionIP=rowElements.get(0);
-		if(rowElements.get(1).equals("d")){
-			borrar=true;
-		}else{
-			borrar=false;
-		}					
 		
-		autoRenoveSegs=rowElements.get(2);
-	}
-	
 	public boolean isBorrar() {
 		return borrar;
 	}

@@ -4,16 +4,18 @@ import java.io.File;
 import java.io.FileReader;
 
 /**
- * Lee las credenciales y otros valores globales de un fichero .txt y las almacena.
+ * Read credentials and other global var from a .txt file, and storage it.
  * @author IGandarillas
  *
  */
 public class GlobalVariables {
 	private String email;
 	private String passwd;
-	private String path;
-	private int min;
-	private int max;
+	private String path;//Path where is .txt file, same that .jar and .xls
+	//Wait time between operation and operation.
+	private int min; //Min wait time
+	private int max; //Max wait time
+	
 	public GlobalVariables(String path){
 		this.setPath(path);
 		openFile(path);
@@ -68,7 +70,7 @@ public class GlobalVariables {
 	        }
 	     }
 	}
-
+//Observers
 	public String getEmail() {
 		return email;
 	}
