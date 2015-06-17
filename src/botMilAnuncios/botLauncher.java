@@ -12,22 +12,24 @@ public class botLauncher {
 		//Create Frame.
 		View view = new View();
 		view.main(args);
-		
+
 		String path = new File (".").getCanonicalPath(); //Path current folder
-		
-		XMLReader read=new XMLReader(path);
+		GlobalVariables cred= new GlobalVariables(path);//Read credenciales
+		System.out.println(cred.getRutaExcel());
+		XMLReader read=new XMLReader(path,cred.getRutaExcel());
 		System.out.println("Excel leido");
 		System.out.println("Peticion HTTP al servidor");
-					
+		LogWriter log= new LogWriter(path);
+		
 		HTTPConnection connect= new HTTPConnection();	
 		HtmlPage page = connect.loadURL(url);//Load URL
 
-		GlobalVariables cred= new GlobalVariables(path);//Read credenciales
 		HtmlPage page2 = connect.login(page,cred.getEmail(),cred.getPasswd());//Login Milanuncios	
+		log.writeLog("\n","[LOGIN]\t"+cred.getEmail()+";");
 		
 		if(connect.isLogin()){
 			System.out.println("Login exitoso. Email: "+cred.getEmail());
-			System.out.println(("Articulos a modificar: "+read.getModCount()[1]));
+			System.out.println(("Articulos a modificar: "+read.getModCount()[1]+"\n"));
 			
 			ArrayList<Articulo> modArticulos = read.getArticulos();//Excel articles must be modified	
 			
@@ -42,13 +44,7 @@ public class botLauncher {
 				String itemId = a.getID();
 				String itemName=a.getTitulo();
 				
-				try {
-					System.out.println("Espera aleatoria de "+delay+" segundos.");
-					Thread.sleep(delay*1000);					
-				} catch (InterruptedException e) {
-					System.out.println("Catch thread sleep");
-					e.printStackTrace();
-				}
+				
 				/**
 				 * Funcionality, http://www.milanuncios.com/mis-anuncios/+ID+.htm
 				 * know if an item is in mis-anuncios list
@@ -59,17 +55,24 @@ public class botLauncher {
 						contDeleted++;
 						connect.loadURL("http://www.milanuncios.com/cmd/?comando="+"borrar"+"&id="+itemId);
 						page2=connect.loadURL(url);
+						log.writeLog("[BORRADO]\t"+itemName+"\t"+itemId+";");
 						System.out.println("Fila: "+a.getFila()+" BORRADO: "+itemName+" ha sido borrado"); 
 						
 					}else{//Autorrenove
 						contAutoR++;						
 						if(connect.autoRenovar(page2, a)){
 							switch(a.getAutoRHour()){
-								case "0": System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO desactivado: "+itemName);
+								case "0": 
+									log.writeLog("[AUTORRENOVADO]\tdesactivado\t"+itemName+"\t"+itemId+";");
+									System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO desactivado: "+itemName);
 									break;
-								case "1": System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO cada hora.: "+itemName);
-									break;
-								default: System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO cada "+a.getAutoRHour()+" horas: "+itemName);
+								case "1": 
+									log.writeLog("[AUTORRENOVADO]\tuna hora\t"+itemName+"\t"+itemId+";");
+									System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO cada hora: "+itemName);
+									break;								
+								default: 
+									log.writeLog("[AUTORRENOVADO]\t"+a.getAutoRHour()+" horas\t"+itemName+"\t"+itemId+";");
+									System.out.println("Fila "+(a.getFila()+1)+": AUTORRENOVADO cada "+a.getAutoRHour()+" horas: "+itemName);
 							}
 						}
 					}
@@ -77,10 +80,17 @@ public class botLauncher {
 					//Item is not in mis-articulos.html
 					System.out.println("Fila "+a.getFila()+": este item no esta entre sus anuncios");
 				}
+				try {
+					//System.out.println("Espera aleatoria de "+delay+" segundos.");
+					Thread.sleep(delay*1000);					
+				} catch (InterruptedException e) {
+					System.out.println("Catch thread sleep");
+					e.printStackTrace();
+				}
 
 				
 			} 
-			
+			System.out.println("");
 			switch(contDeleted){
 			case 0: System.out.println("No se ha eliminado ningun elemento");
 				break;
@@ -95,6 +105,8 @@ public class botLauncher {
 				break;
 			default: System.out.println("Se han autorrenovado "+contAutoR+" elementos");
 			}
+		}else{
+			log.writeLog("[LOGIN]\tdatos incorrectos\t");
 		}
 	}
 

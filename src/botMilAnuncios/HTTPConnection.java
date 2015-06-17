@@ -47,7 +47,7 @@ public class HTTPConnection {
 		wb.setAlertHandler(new AlertHandler() {            
             @Override
             public void handleAlert(Page page, String message) {
-                System.out.println("Alert: " + message);
+            	undefined(message);
                 login(message);
                 	
                  
@@ -55,7 +55,14 @@ public class HTTPConnection {
             //Alerta Login incorrecto.
             public boolean login(String message){
             	login = !message.startsWith("El email o la ", 0);
+            	if(!login)
+            		 System.out.println("Contraseña o email incorrectos");
             	return login;
+            }
+            public void undefined(String message){            	
+            	if(message.startsWith("undefined", 0))
+            		 System.out.println("Este articulo no esta en su lista de articulos");
+            	
             }
         });
 	}

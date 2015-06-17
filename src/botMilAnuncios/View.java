@@ -11,7 +11,7 @@ public class View extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextArea textArea = new JTextArea(30, 60);
-	private TextOutputStream outputStream = new TextOutputStream(textArea, "Log");
+	private TextOutputStream outputStream = new TextOutputStream(textArea, "\t");
 	public View(){
 		
 		setLayout(new BorderLayout());

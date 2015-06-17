@@ -8,32 +8,32 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class XMLReader {
 
 	private FileInputStream file;
-	private HSSFRow row; 
-	private HSSFCell cell;
+	private XSSFRow row; 
+	private XSSFCell cell;
 	private Iterator<Row> rowIterator;
 	private int rowCount=0;
 	private int count=0;
 	private Articulo articulo;
 	private ArrayList<Articulo> articulosList;
 	private static final double SEGS_HOUR= 3600;
-	public XMLReader(String path) throws IOException{
+	public XMLReader(String path,String name) throws IOException{
 		articulosList=new ArrayList<Articulo>();
-		file = new FileInputStream(new File(path+"\\Hoja.xls"));
+		file = new FileInputStream(new File(path+"\\"+name));
 		//Get the workbook instance for XLS file 
-		HSSFWorkbook workbook = new HSSFWorkbook(file);
+		XSSFWorkbook workbook = new XSSFWorkbook(file);
 		 
 		//Get first sheet from the workbook
-		HSSFSheet sheet = workbook.getSheetAt(0);
+		XSSFSheet sheet = workbook.getSheetAt(0);
 		 
 		//Get iterator to all the rows in current sheet
 		rowIterator = sheet.rowIterator();		
@@ -50,7 +50,7 @@ public class XMLReader {
 		while(rowIterator.hasNext()){
 			rowCount++;
 			if(rowCount!=0){
-				row=(HSSFRow) rowIterator.next();
+				row=(XSSFRow) rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();	
 				
 				/**
@@ -58,8 +58,8 @@ public class XMLReader {
 				 * 
 				 */			
 				while(cellIterator.hasNext()){				
-					cell = (HSSFCell) cellIterator.next();
-					if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING){
+					cell = (XSSFCell) cellIterator.next();
+					if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING){
 						String cellValue = cell.getStringCellValue();					
 	
 						
@@ -68,11 +68,15 @@ public class XMLReader {
 							row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 							articulo=new Articulo();
 						
-							articulo.setAutoRenoveSegs(parseAutoRenoveSegs(row.getCell(2).getNumericCellValue()));
-							articulo.setAutoRHour(parseAutoRenoveHours(row.getCell(2).getNumericCellValue())); 
-							articulo.setBorrar(parseBorrar(row.getCell(1).getStringCellValue()));
+							articulo.setAutoRenoveSegs(parseAutoRenoveSegs(row.getCell(3).getNumericCellValue()));
+							articulo.setAutoRHour(parseAutoRenoveHours(row.getCell(3).getNumericCellValue())); 
+							if(row.getCell(2).getCellType()==XSSFCell.CELL_TYPE_BLANK){
+								articulo.setBorrar(false);
+							}else{
+								articulo.setBorrar(parseBorrar(row.getCell(2).getStringCellValue()));
+							}							
 							articulo.setID(parseId(row.getCell(0).getStringCellValue()));
-							articulo.setTitulo(row.getCell(4).getStringCellValue());
+							articulo.setTitulo(row.getCell(1).getStringCellValue());
 							articulo.setFila(row.getRowNum());
 							articulosList.add(articulo);
 							count++;

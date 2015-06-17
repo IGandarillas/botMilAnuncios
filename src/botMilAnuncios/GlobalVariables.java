@@ -15,7 +15,7 @@ public class GlobalVariables {
 	//Wait time between operation and operation.
 	private int min; //Min wait time
 	private int max; //Max wait time
-	
+	private String rutaExcel;
 	public GlobalVariables(String path){
 		this.setPath(path);
 		openFile(path);
@@ -32,13 +32,13 @@ public class GlobalVariables {
 	     try {
 	        // Apertura del fichero y creacion de BufferedReader para poder
 	        // hacer una lectura comoda (disponer del metodo readLine()).
-	        archivo = new File (path+"\\login.txt");
+	        archivo = new File (path+"\\variables.txt");
 	        fr = new FileReader (archivo);
 	        br = new BufferedReader(fr);
 
 	        // Lectura del fichero
 	        String linea;
-	        for(int i = 0; i < 4; i++){
+	        for(int i = 0; i < 5; i++){
 	        	if((linea=br.readLine())!=null){
 	        		switch(i){
 		        		case 0:email=linea;
@@ -48,6 +48,8 @@ public class GlobalVariables {
 		        		case 2:setMin(Integer.parseInt(linea));
 		        		break;
 		        		case 3:setMax(Integer.parseInt(linea));
+		        		break;
+		        		case 4:setRutaExcel(linea);
 		        		break;
 	        		}
 	        	}
@@ -109,6 +111,14 @@ public class GlobalVariables {
 
 	public void setMax(int max) {
 		this.max = max;
+	}
+
+	public String getRutaExcel() {
+		return rutaExcel;
+	}
+
+	public void setRutaExcel(String rutaExcel) {
+		this.rutaExcel = rutaExcel;
 	}
 	
 }

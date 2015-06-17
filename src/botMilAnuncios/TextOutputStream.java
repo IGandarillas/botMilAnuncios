@@ -9,11 +9,12 @@ import javax.swing.SwingUtilities;
 public class TextOutputStream extends OutputStream {
 	 private final JTextArea textArea;
 	 private final StringBuilder sb = new StringBuilder();
-	 private String title;
+	 @SuppressWarnings("unused")
+	private String title;
 	public TextOutputStream(final JTextArea textArea,String title){
 		this.textArea=textArea;
 		this.title=title;
-		sb.append(title+"> ");
+
 	}
 
 	@Override
@@ -29,7 +30,7 @@ public class TextOutputStream extends OutputStream {
 	            }
 	         });
 	         sb.setLength(0);
-	         sb.append(title + "> ");
+	       
 	         return;
 	      }
 
